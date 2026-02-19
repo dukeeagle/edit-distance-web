@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "installCommand": "bun install",
   "rewrites": [
-    { "source": "/share", "destination": "/api/share" }
+    { "source": "/share", "destination": "/api/share" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
