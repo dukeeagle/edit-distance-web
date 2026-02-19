@@ -2,6 +2,15 @@ import "./index.css";
 import { useState, useMemo, useEffect } from "react";
 import { levenshtein } from "./editDistance";
 
+type Theme = "light" | "dark";
+const THEME_STORAGE_KEY = "edit-distance-theme";
+
+function getInitialTheme(): Theme {
+  const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (saved === "light" || saved === "dark") return saved;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 function getInitialParams() {
   const params = new URLSearchParams(window.location.search);
   return {
@@ -14,6 +23,7 @@ export function App() {
   const initial = getInitialParams();
   const [source, setSource] = useState(initial.source);
   const [target, setTarget] = useState(initial.target);
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
 
   const result = useMemo(() => {
     if (!source && !target) return null;
@@ -29,6 +39,12 @@ export function App() {
     const url = qs ? `?${qs}` : window.location.pathname;
     window.history.replaceState(null, "", url);
   }, [source, target]);
+
+  // Persist theme choice and force it over system preference.
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   // Update OG meta tags client-side
   useEffect(() => {
@@ -78,6 +94,15 @@ export function App() {
             spellCheck={false}
             className="flex-1 px-4 py-3 text-sm bg-transparent outline-none"
           />
+          <button
+            type="button"
+            onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            aria-label="Toggle light and dark mode"
+            aria-pressed={theme === "dark"}
+            className="shrink-0 min-w-20 px-3 py-3 border-l border-border bg-secondary hover:bg-accent text-xs uppercase tracking-tight cursor-pointer"
+          >
+            {theme}
+          </button>
         </div>
         <div className="flex border border-border border-t-0">
           <label className="text-sm px-4 py-3 border-r border-border bg-secondary w-20 shrink-0 flex items-center">
