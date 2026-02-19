@@ -1,5 +1,5 @@
 import "./index.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { levenshtein } from "./editDistance";
 
 type Theme = "light" | "dark";
@@ -54,6 +54,21 @@ export function App() {
     const url = qs ? `/?${qs}` : "/";
     window.history.replaceState(null, "", url);
   }, [aboutPage, source, target]);
+
+  // Log entry (debounced 2s after last keystroke)
+  const logTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    if (aboutPage || (!source && !target) || !result) return;
+    clearTimeout(logTimer.current);
+    logTimer.current = setTimeout(() => {
+      fetch("/api/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source, target, distance: result.distance }),
+      }).catch(() => {});
+    }, 2000);
+    return () => clearTimeout(logTimer.current);
+  }, [aboutPage, source, target, result]);
 
   // Persist theme choice and force it over system preference.
   useEffect(() => {
