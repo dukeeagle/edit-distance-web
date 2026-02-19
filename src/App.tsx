@@ -179,7 +179,7 @@ function CalculatorPage({
             value={source}
             onChange={(e) => setSource(e.target.value)}
             spellCheck={false}
-            className="flex-1 px-4 py-3 text-sm bg-transparent outline-none"
+            className="flex-1 px-4 py-3 text-base bg-transparent outline-none"
           />
         </div>
         <div className="flex border border-border border-t-0">
@@ -190,7 +190,7 @@ function CalculatorPage({
             value={target}
             onChange={(e) => setTarget(e.target.value)}
             spellCheck={false}
-            className="flex-1 px-4 py-3 text-sm bg-transparent outline-none"
+            className="flex-1 px-4 py-3 text-base bg-transparent outline-none"
           />
         </div>
       </div>
