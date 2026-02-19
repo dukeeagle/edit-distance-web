@@ -108,7 +108,7 @@ export function App() {
       : "text-muted-foreground hover:text-foreground";
 
   return (
-    <div className={`${aboutPage ? "max-w-[920px]" : "max-w-[720px]"} mx-auto px-8 py-8`}>
+    <div className={`${aboutPage ? "max-w-[920px]" : "max-w-[720px]"} mx-auto px-4 sm:px-8 py-8 overflow-x-hidden`}>
       <header className="mb-6">
         <div className="flex items-end justify-between gap-4">
           <h1 className="text-sm font-bold tracking-tight">
@@ -350,7 +350,7 @@ Emitted edit script (forward order):
           <span className="text-sm font-bold">Complexity</span>
         </div>
         <div className="border border-border p-4">
-          <pre className="text-[12px] leading-5 whitespace-pre">
+          <pre className="text-[12px] leading-5 whitespace-pre-wrap">
 {`Time  : O(m * n)
 Space : O(m * n)
 
