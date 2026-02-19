@@ -11,7 +11,7 @@ const DEFAULT_DESCRIPTION =
   "Compare two strings and see edit distance, operations, and transformation trace by Luke Igel.";
 const ABOUT_TITLE = "About Edit Distance | Luke Igel";
 const ABOUT_DESCRIPTION =
-  "A brief visual guide to Levenshtein edit distance with dynamic-programming diagrams and complexity notes.";
+  "The recurrence relation, a worked matrix example, and complexity notes for Levenshtein edit distance.";
 
 function getInitialTheme(): Theme {
   const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -99,7 +99,7 @@ export function App() {
     const params = new URLSearchParams();
     if (source) params.set("source", source);
     if (target) params.set("target", target);
-    return `/?${params.toString()}`;
+    return `/share?${params.toString()}`;
   }, [aboutPage, source, target]);
 
   const navLinkClass = (active: boolean) =>
@@ -262,9 +262,9 @@ function AboutPage() {
   return (
     <div className="space-y-6">
       <p className="text-sm leading-6 max-w-[72ch]">
-        Edit distance (Levenshtein distance) asks a direct question: what is the minimum number of
-        single-character edits needed to turn one string into another? This implementation uses
-        dynamic programming, then backtraces the matrix to emit concrete operations.
+        Edit distance (Levenshtein distance) is the minimum number of single-character edits —
+        insertions, deletions, or substitutions — needed to transform one string into another.
+        This implementation builds the full DP matrix and backtraces it to recover the edit sequence.
       </p>
 
       <section>
