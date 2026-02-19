@@ -15,10 +15,8 @@ function levenshtein(source: string, target: string) {
   const m = source.length;
   const n = target.length;
   const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
   for (let i = 0; i <= m; i++) dp[i][0] = i;
   for (let j = 0; j <= n; j++) dp[0][j] = j;
-
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
       if (source[i - 1] === target[j - 1]) {
@@ -28,46 +26,37 @@ function levenshtein(source: string, target: string) {
       }
     }
   }
-
   const operations: Operation[] = [];
   let i = m, j = n;
-
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && source[i - 1] === target[j - 1]) {
-      i--; j--;
-    } else if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + 1) {
-      operations.unshift({ position: i, source: source[i - 1], target: target[j - 1], op: "substitute" });
-      i--; j--;
+    if (i > 0 && j > 0 && source[i - 1] === target[j - 1]) { i--; j--; }
+    else if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + 1) {
+      operations.unshift({ position: i, source: source[i - 1], target: target[j - 1], op: "substitute" }); i--; j--;
     } else if (i > 0 && dp[i][j] === dp[i - 1][j] + 1) {
-      operations.unshift({ position: i, source: source[i - 1], target: "\u2014", op: "delete" });
-      i--;
+      operations.unshift({ position: i, source: source[i - 1], target: "\u2014", op: "delete" }); i--;
     } else {
-      operations.unshift({ position: j, source: "\u2014", target: target[j - 1], op: "insert" });
-      j--;
+      operations.unshift({ position: j, source: "\u2014", target: target[j - 1], op: "insert" }); j--;
     }
   }
-
   const steps: Step[] = [];
   let current = source;
   let offset = 0;
-
   for (let k = 0; k < operations.length; k++) {
     const op = operations[k];
     const pos = op.position - 1 + offset;
     if (op.op === "substitute") {
       current = current.slice(0, pos) + op.target + current.slice(pos + 1);
-      steps.push({ step: k + 1, operation: `substitute`, result: current });
+      steps.push({ step: k + 1, operation: "substitute", result: current });
     } else if (op.op === "delete") {
       current = current.slice(0, pos) + current.slice(pos + 1);
-      steps.push({ step: k + 1, operation: `delete`, result: current });
+      steps.push({ step: k + 1, operation: "delete", result: current });
       offset--;
     } else {
       current = current.slice(0, op.position - 1 + offset) + op.target + current.slice(op.position - 1 + offset);
-      steps.push({ step: k + 1, operation: `insert`, result: current });
+      steps.push({ step: k + 1, operation: "insert", result: current });
       offset++;
     }
   }
-
   return { distance: dp[m][n], operations, steps };
 }
 
@@ -83,23 +72,20 @@ export default function handler(req: any, res: any) {
   const hasInputs = source || target;
 
   const title = hasInputs
-    ? `${source} \u2192 ${target} = ${result.distance}`
+    ? `the edit distance between ${source} and ${target} is ${result.distance}`
     : "Edit Distance Calculator | Luke Igel";
 
   const description = hasInputs
     ? result.operations.length > 0
-      ? `Distance: ${result.distance} | ${result.operations.map((o) => o.op).join(", ")}`
+      ? `${result.operations.map((o) => o.op).join(", ")} | ${[source, ...result.steps.map((s) => s.result)].join(" \u2192 ")}`
       : `Distance: ${result.distance}`
-    : "Compare two strings and see edit distance, operations, and transformation trace by Luke Igel.";
-
-  const trace = hasInputs && result.steps.length > 0
-    ? [source, ...result.steps.map((s) => s.result)].join(" \u2192 ")
-    : "";
+    : "Compare two strings and see edit distance, operations, and transformation trace.";
 
   const params = new URLSearchParams();
   if (source) params.set("source", source);
   if (target) params.set("target", target);
   const appUrl = `/?${params.toString()}`;
+  const ogImageUrl = `/api/og?${params.toString()}`;
 
   res.setHeader("content-type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html>
@@ -114,16 +100,19 @@ export default function handler(req: any, res: any) {
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="${ogImageUrl}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
+  <meta name="twitter:image" content="${ogImageUrl}" />
   <meta http-equiv="refresh" content="0;url=${appUrl}" />
   <style>body { font-family: "SF Mono", ui-monospace, monospace; margin: 2rem; }</style>
 </head>
 <body>
   <h1>${escapeHtml(title)}</h1>
   <p>${escapeHtml(description)}</p>
-  ${trace ? `<p>${escapeHtml(trace)}</p>` : ""}
   <p><a href="${appUrl}">Open calculator</a></p>
 </body>
 </html>`);
