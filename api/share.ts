@@ -104,20 +104,20 @@ export default function handler(req: any, res: any) {
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta property="og:image" content="${ogImageUrl}" />
+  <meta property="og:image" content="${escapeHtml(ogImageUrl)}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
-  <meta name="twitter:image" content="${ogImageUrl}" />
-  <meta http-equiv="refresh" content="0;url=${appUrl}" />
+  <meta name="twitter:image" content="${escapeHtml(ogImageUrl)}" />
+  <meta http-equiv="refresh" content="0;url=${escapeHtml(appUrl)}" />
   <style>body { font-family: "SF Mono", ui-monospace, monospace; margin: 2rem; }</style>
 </head>
 <body>
   <h1>${escapeHtml(title)}</h1>
   <p>${escapeHtml(description)}</p>
-  <p><a href="${appUrl}">Open calculator</a></p>
+  <p><a href="${escapeHtml(appUrl)}">Open calculator</a></p>
 </body>
 </html>`);
 }
