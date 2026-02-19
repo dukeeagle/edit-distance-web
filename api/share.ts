@@ -81,11 +81,15 @@ export default function handler(req: any, res: any) {
       : `Distance: ${result.distance}`
     : "Compare two strings and see edit distance, operations, and transformation trace.";
 
+  const host = req.headers?.host || "edit-distance.igel.mov";
+  const proto = req.headers?.["x-forwarded-proto"] || "https";
+  const origin = `${proto}://${host}`;
+
   const params = new URLSearchParams();
   if (source) params.set("source", source);
   if (target) params.set("target", target);
   const appUrl = `/?${params.toString()}`;
-  const ogImageUrl = `/api/og?${params.toString()}`;
+  const ogImageUrl = `${origin}/api/og?${params.toString()}`;
 
   res.setHeader("content-type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html>
