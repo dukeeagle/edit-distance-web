@@ -1,5 +1,3 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-
 interface Operation {
   position: number;
   source: string;
@@ -77,7 +75,7 @@ function escapeHtml(s: string) {
   return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default function handler(req: any, res: any) {
   const source = (req.query.source as string) || "";
   const target = (req.query.target as string) || "";
 
