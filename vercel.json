@@ -1,0 +1,8 @@
+{
+  "buildCommand": "bun run build.ts",
+  "outputDirectory": "dist",
+  "installCommand": "bun install",
+  "rewrites": [
+    { "source": "/share", "destination": "/api/share" }
+  ]
+}
